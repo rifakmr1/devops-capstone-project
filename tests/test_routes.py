@@ -150,4 +150,34 @@ class TestAccountService(TestCase):
         resp = self.client.get(BASE_URL)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
-        self.assertEqual(len(data), 0)    
+        self.assertEqual(len(data), 0) 
+
+    def test_update_account(self):
+        account = self._create_accounts(1)[0]
+        new_name = "Updated Name"
+        account.name = new_name
+        resp = self.client.put(f"{BASE_URL}/{account.id}", json=account.serialize(), content_type="application/json")
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        updated_account = resp.get_json()
+        self.assertEqual(updated_account["name"], new_name)
+        # Verify it's actually updated by fetching again
+        resp = self.client.get(f"{BASE_URL}/{account.id}", content_type="application/json")
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        fetched_account = resp.get_json()
+        self.assertEqual(fetched_account["name"], new_name)
+
+    def test_update_account_not_found(self):
+        account = AccountFactory()
+        resp = self.client.put(f"{BASE_URL}/0", json=account.serialize(), content_type="application/json")
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_update_account_bad_data(self):
+        account = self._create_accounts(1)[0]
+        resp = self.client.put(f"{BASE_URL}/{account.id}", json={"bad_field": "bad_data"}, content_type="application/json")
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_update_account_unsupported_media_type(self):
+        account = self._create_accounts(1)[0]
+        resp = self.client.put(f"{BASE_URL}/{account.id}", json=account.serialize(), content_type="text/plain")
+        self.assertEqual(resp.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+       
