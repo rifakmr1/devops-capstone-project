@@ -94,7 +94,6 @@ The Account model contains the following fields:
 
 Complete this microservice by implementing REST API's for `READ`, `UPDATE`, `DELETE`, and `LIST` while maintaining **95%** code coverage. In true **Test Driven Development** fashion, first write tests for the code you "wish you had", and then write the code to make them pass.
 
-##CICD build
 
  ![Build Status](https://github.com/rifakmr1/devops-capstone-project/actions/workflows/ci-build.yaml/badge.svg)
 
