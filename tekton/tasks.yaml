@@ -14,6 +14,7 @@ spec:
       image: alpine:3
       command: [/bin/echo]
       args: ["$(params.message)"]
+
 ---
 apiVersion: tekton.dev/v1beta1
 kind: Task
@@ -49,25 +50,25 @@ spec:
           # Delete files and directories starting with .. plus any other character
           rm -rf "${WORKSPACE_SOURCE_PATH}"/..?*
         fi
----
+
 ---
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: nose
+  name: tests
 spec:
   description: This task will run nosetests on the provided input.
   workspaces:
     - name: source
   params:
     - name: args
-      description: Arguments to pass to nose
+      description: The arguments to pass to the nose CLI
       type: string
-      default: "-v"
+      default: -v
     - name: database_uri
-      description: Database connection string
+      description: Database connection string of test database
       type: string
-      default: "sqlite:///test.db"
+      default: sqlite:///test.db
   steps:
     - name: nosetests
       image: python:3.9-slim
@@ -79,9 +80,10 @@ spec:
         #!/bin/bash
         set -e
 
-        echo "***** Installing dependencies *****"
+        echo "**** Installing dependencies ****"
         python -m pip install --upgrade pip wheel
         pip install -qr requirements.txt
 
-        echo "***** Running nosetests with: $(params.args)"
+        echo "**** Running nosetests with: $(params.args) ****"
         nosetests $(params.args)
+...
