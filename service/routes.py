@@ -71,9 +71,6 @@ def list_all_accounts():
     app.logger.info("[%s] accounts found.", len(account_list))
 
     if len(account_list) == 0:
-        # No error status code, because it is not an error
-        # if nothing specific was searched for
-        # and nothing was found in an empty database.
         response_status = status.HTTP_200_OK
         message = account_list
     else:
